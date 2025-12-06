@@ -1,4 +1,4 @@
-# FlashCards - Learn Smarter 📚
+# Synapse - Learn Smarter 📚
 
 A modern flashcard web application built with Next.js, TypeScript, and Tailwind CSS. Create word sets, practice with flashcards, quizzes, and fun games!
 
@@ -172,6 +172,27 @@ npm start
 # Run linter
 npm run lint
 ```
+
+## 🤖 AI-Powered Features
+
+Synapse can use Google AI (Gemini) to automatically generate short descriptions for your study sets based on the words they contain.
+
+### Configure your Google AI API key
+
+Create a `.env.local` file in the `flashcard-app` directory (next to `package.json`) and add:
+
+```bash
+GOOGLE_AI_API_KEY=your_google_ai_key_here
+```
+
+Restart the dev server after adding or changing this file.
+
+### Where AI is used
+
+- **New Set**: On the “Create New Set” page, use the **Generate with AI** button next to the Description field to auto-fill a description from the words you’ve entered.
+- **Edit Set**: On the “Edit Set” page, use the same button to regenerate or improve the description for an existing set.
+
+All AI calls are made through a server-side API route (`/api/generate-description`), so your API key is never exposed to the browser.
 
 ## 📄 License
 

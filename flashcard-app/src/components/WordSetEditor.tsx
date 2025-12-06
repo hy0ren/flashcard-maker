@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { WordEntry } from '@/lib/types';
 import { parseWords, entriesToText } from '@/lib/parseWords';
@@ -16,6 +16,8 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
   const [words, setWords] = useState<WordEntry[]>(initialWords);
   const [bulkText, setBulkText] = useState('');
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const dragNodeRef = useRef<HTMLDivElement | null>(null);
   
   useEffect(() => {
     if (initialWords.length > 0 && words.length === 0) {
@@ -51,24 +53,62 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
     setMode('list');
   };
   
-  const handleDragStart = (index: number) => {
+  const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
+    dragNodeRef.current = e.target as HTMLDivElement;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+    
+    // Add a slight delay to apply dragging styles
+    setTimeout(() => {
+      if (dragNodeRef.current) {
+        dragNodeRef.current.style.opacity = '0.5';
+      }
+    }, 0);
   };
   
-  const handleDragOver = (e: React.DragEvent, index: number) => {
+  const handleDragEnter = (e: React.DragEvent, index: number) => {
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+  
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+  
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    // Only clear if we're leaving the element entirely
+    const relatedTarget = e.relatedTarget as Node;
+    if (!e.currentTarget.contains(relatedTarget)) {
+      setDragOverIndex(null);
+    }
+  };
+  
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDragOverIndex(null);
+      return;
+    }
     
     const updated = [...words];
     const [removed] = updated.splice(draggedIndex, 1);
-    updated.splice(index, 0, removed);
+    updated.splice(dropIndex, 0, removed);
     setWords(updated);
-    setDraggedIndex(index);
     onChange(updated);
+    setDragOverIndex(null);
   };
   
   const handleDragEnd = () => {
+    if (dragNodeRef.current) {
+      dragNodeRef.current.style.opacity = '1';
+    }
     setDraggedIndex(null);
+    setDragOverIndex(null);
+    dragNodeRef.current = null;
   };
   
   return (
@@ -154,15 +194,22 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
                 <div
                   key={word.id}
                   draggable
-                  onDragStart={() => handleDragStart(index)}
-                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragEnter={(e) => handleDragEnter(e, index)}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, index)}
                   onDragEnd={handleDragEnd}
-                  className={`grid grid-cols-[40px_1fr_1fr_40px] gap-3 items-center p-2 rounded-xl bg-[var(--card)] border border-[var(--border)] transition-all animate-fadeIn ${
-                    draggedIndex === index ? 'opacity-50 scale-[0.98]' : ''
+                  className={`grid grid-cols-[40px_1fr_1fr_40px] gap-3 items-center p-2 rounded-xl bg-[var(--card)] border-2 transition-all animate-fadeIn ${
+                    draggedIndex === index 
+                      ? 'opacity-50 scale-[0.98] border-[var(--border)]' 
+                      : dragOverIndex === index 
+                        ? 'border-[var(--primary)] bg-[var(--primary-light)] shadow-md' 
+                        : 'border-[var(--border)]'
                   }`}
                   style={{ animationDelay: `${index * 0.02}s` }}
                 >
-                  <div className="flex justify-center cursor-grab active:cursor-grabbing text-[var(--muted)]">
+                  <div className="flex justify-center cursor-grab active:cursor-grabbing text-[var(--muted)] hover:text-[var(--primary)] transition-colors">
                     <GripVertical className="w-5 h-5" />
                   </div>
                   

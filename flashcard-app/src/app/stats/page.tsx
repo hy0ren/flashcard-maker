@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { WordSet } from '@/lib/types';
 import { listSets } from '@/lib/storage';
+import { Logo } from '@/components/Logo';
 
 export default function StatsPage() {
   const [sets, setSets] = useState<WordSet[]>([]);
@@ -23,8 +24,8 @@ export default function StatsPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl icon-container-primary animate-pulse-gentle">
-            <BarChart3 className="w-6 h-6" />
+          <div className="animate-pulse-gentle">
+            <Logo size={48} asLink={false} />
           </div>
           <p className="text-[var(--muted)] font-medium">Loading stats...</p>
         </div>
@@ -75,9 +76,7 @@ export default function StatsPage() {
         className="mb-12"
       >
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-14 h-14 rounded-2xl icon-container-primary">
-            <BarChart3 className="w-7 h-7 text-white" />
-          </div>
+          <Logo size={56} asLink={false} />
           <div>
             <h1 className="text-3xl font-bold">
               Your <span className="font-serif italic">Statistics</span>

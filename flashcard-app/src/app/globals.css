@@ -1,23 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  /* Rich, sophisticated palette inspired by luxury brands */
-  --background: #f8f6f3;
-  --background-secondary: #f0ede8;
-  --foreground: #1c1917;
+  /* Soft, modern palette with blue/teal accents */
+  --background: #f4f7fb;
+  --background-secondary: #e5edf7;
+  --foreground: #020617;
   --card: #ffffff;
-  --card-hover: #faf9f7;
+  --card-hover: #eef3fb;
   
-  /* Vibrant coral/terracotta primary */
-  --primary: #e54d2e;
-  --primary-hover: #cd4324;
-  --primary-light: #fff1ee;
-  --primary-dark: #aa3a21;
+  /* Cool blue primary */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #dbeafe;
+  --primary-dark: #1e40af;
   
-  /* Deep teal accent */
-  --accent: #0d9488;
-  --accent-hover: #0f766e;
+  /* Teal accent */
+  --accent: #14b8a6;
+  --accent-hover: #0d9488;
   --accent-light: #ccfbf1;
   
   /* Warm neutrals */
@@ -40,38 +42,38 @@
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.06), 0 4px 8px rgba(0, 0, 0, 0.04);
   --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.08), 0 12px 24px rgba(0, 0, 0, 0.04);
-  --shadow-glow: 0 0 40px rgba(229, 77, 46, 0.15);
+  --shadow-glow: 0 0 40px rgba(37, 99, 235, 0.18);
   
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #e54d2e 0%, #f97316 100%);
-  --gradient-accent: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
+  --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+  --gradient-accent: linear-gradient(135deg, #22c55e 0%, #14b8a6 100%);
   --gradient-warm: linear-gradient(135deg, #fef3c7 0%, #fecaca 50%, #fae8ff 100%);
-  --gradient-mesh: radial-gradient(at 40% 20%, rgba(229, 77, 46, 0.08) 0px, transparent 50%),
-                   radial-gradient(at 80% 0%, rgba(13, 148, 136, 0.06) 0px, transparent 50%),
-                   radial-gradient(at 0% 50%, rgba(249, 115, 22, 0.06) 0px, transparent 50%);
+  --gradient-mesh: radial-gradient(at 40% 20%, rgba(37, 99, 235, 0.10) 0px, transparent 55%),
+                   radial-gradient(at 80% 0%, rgba(14, 148, 136, 0.08) 0px, transparent 55%),
+                   radial-gradient(at 0% 50%, rgba(125, 211, 252, 0.10) 0px, transparent 55%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0c0a09;
-    --background-secondary: #1c1917;
+    --background: #020617;
+    --background-secondary: #020617;
     --foreground: #fafaf9;
-    --card: #1c1917;
-    --card-hover: #292524;
+    --card: #020617;
+    --card-hover: #020617;
     
-    --primary: #f97316;
-    --primary-hover: #fb923c;
-    --primary-light: #431407;
-    --primary-dark: #ea580c;
+    --primary: #38bdf8;
+    --primary-hover: #0ea5e9;
+    --primary-light: #082f49;
+    --primary-dark: #0369a1;
     
-    --accent: #2dd4bf;
-    --accent-hover: #5eead4;
-    --accent-light: #042f2e;
+    --accent: #22d3ee;
+    --accent-hover: #06b6d4;
+    --accent-light: #083344;
     
     --muted: #a8a29e;
-    --muted-light: #44403c;
-    --border: #292524;
-    --border-strong: #44403c;
+    --muted-light: #1e293b;
+    --border: #111827;
+    --border-strong: #1e293b;
     
     --danger: #ef4444;
     --danger-light: #450a0a;
@@ -80,10 +82,10 @@
     --warning: #f97316;
     --warning-light: #431407;
     
-    --shadow-glow: 0 0 60px rgba(249, 115, 22, 0.2);
-    --gradient-mesh: radial-gradient(at 40% 20%, rgba(249, 115, 22, 0.12) 0px, transparent 50%),
-                     radial-gradient(at 80% 0%, rgba(45, 212, 191, 0.08) 0px, transparent 50%),
-                     radial-gradient(at 0% 50%, rgba(249, 115, 22, 0.08) 0px, transparent 50%);
+    --shadow-glow: 0 0 60px rgba(56, 189, 248, 0.28);
+    --gradient-mesh: radial-gradient(at 40% 20%, rgba(56, 189, 248, 0.18) 0px, transparent 55%),
+                     radial-gradient(at 80% 0%, rgba(34, 211, 238, 0.12) 0px, transparent 55%),
+                     radial-gradient(at 0% 50%, rgba(37, 99, 235, 0.18) 0px, transparent 55%);
   }
 }
 
@@ -183,12 +185,12 @@ body {
 .btn-primary {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: var(--shadow-sm), 0 2px 8px rgba(229, 77, 46, 0.25);
+  box-shadow: var(--shadow-sm), 0 2px 8px rgba(37, 99, 235, 0.28);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md), 0 4px 16px rgba(229, 77, 46, 0.3);
+  box-shadow: var(--shadow-md), 0 4px 16px rgba(37, 99, 235, 0.35);
 }
 
 .btn-primary:active {
@@ -240,12 +242,12 @@ body {
 .btn-accent {
   background: var(--gradient-accent);
   color: white;
-  box-shadow: var(--shadow-sm), 0 2px 8px rgba(13, 148, 136, 0.25);
+  box-shadow: var(--shadow-sm), 0 2px 8px rgba(20, 184, 166, 0.28);
 }
 
 .btn-accent:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md), 0 4px 16px rgba(13, 148, 136, 0.3);
+  box-shadow: var(--shadow-md), 0 4px 16px rgba(20, 184, 166, 0.35);
 }
 
 /* ===== CARDS ===== */
@@ -349,13 +351,13 @@ body {
 .badge-primary {
   background: var(--primary-light);
   color: var(--primary);
-  border: 1px solid rgba(229, 77, 46, 0.2);
+  border: 1px solid rgba(37, 99, 235, 0.35);
 }
 
 .badge-accent {
   background: var(--accent-light);
   color: var(--accent);
-  border: 1px solid rgba(13, 148, 136, 0.2);
+  border: 1px solid rgba(20, 184, 166, 0.32);
 }
 
 .badge-muted {
@@ -462,8 +464,8 @@ body {
 }
 
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(229, 77, 46, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(229, 77, 46, 0.5); }
+  0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.35); }
+  50% { box-shadow: 0 0 40px rgba(56, 189, 248, 0.55); }
 }
 
 @keyframes confetti {
@@ -627,13 +629,13 @@ body {
 .icon-container-primary {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 4px 12px rgba(229, 77, 46, 0.3);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
 }
 
 .icon-container-accent {
   background: var(--gradient-accent);
   color: white;
-  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+  box-shadow: 0 6px 18px rgba(20, 184, 166, 0.45);
 }
 
 /* ===== STAT CARDS ===== */

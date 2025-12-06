@@ -8,6 +8,7 @@ import { WordSet } from '@/lib/types';
 import { listSets, deleteSet, saveSet, exportSets, importSets } from '@/lib/storage';
 import { getAllDemoSets } from '@/lib/demoData';
 import SetCard from '@/components/SetCard';
+import { Logo } from '@/components/Logo';
 
 export default function Dashboard() {
   const [sets, setSets] = useState<WordSet[]>([]);
@@ -69,8 +70,8 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl icon-container-primary animate-pulse-gentle">
-            <BookOpen className="w-6 h-6" />
+          <div className="animate-pulse-gentle">
+            <Logo size={48} asLink={false} />
           </div>
           <p className="text-[var(--muted)] font-medium">Loading your sets...</p>
         </div>
@@ -95,7 +96,7 @@ export default function Dashboard() {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.1, type: 'spring' }}
+          transition={{ delay: 0.15, type: 'spring' }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--primary-light)] border border-[var(--primary)]/20 text-[var(--primary)] text-sm font-semibold mb-6"
         >
           <Sparkles className="w-4 h-4" />
@@ -103,8 +104,9 @@ export default function Dashboard() {
         </motion.div>
         
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
+          <span className="text-gradient block mb-2 leading-tight">Synapse</span>
           <span className="font-serif italic">Master</span> any{' '}
-          <span className="text-gradient">vocabulary</span>
+          <span className="text-gradient-accent">vocabulary</span>
         </h1>
         
         <p className="text-lg md:text-xl text-[var(--muted)] max-w-2xl mx-auto leading-relaxed">
@@ -213,9 +215,9 @@ export default function Dashboard() {
               <motion.div 
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="w-24 h-24 rounded-3xl icon-container-primary mx-auto mb-8"
+                className="flex justify-center mb-8"
               >
-                <BookOpen className="w-12 h-12 text-white" />
+                <Logo size={96} asLink={false} />
               </motion.div>
               
               <h2 className="text-3xl font-bold mb-3">

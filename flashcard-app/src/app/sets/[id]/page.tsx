@@ -87,21 +87,16 @@ export default function SetDetailPage({ params }: SetDetailPageProps) {
         </Link>
         
         <div className="flex flex-wrap items-start justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-2xl icon-container-primary flex-shrink-0">
-              <BookOpen className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-3xl font-bold">{set.title}</h1>
-                {set.stats.totalPractices > 10 && (
-                  <Sparkles className="w-5 h-5 text-[var(--warning)]" />
-                )}
-              </div>
-              {set.description && (
-                <p className="text-[var(--muted)] text-lg">{set.description}</p>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-3xl font-bold">{set.title}</h1>
+              {set.stats.totalPractices > 10 && (
+                <Sparkles className="w-5 h-5 text-[var(--warning)]" />
               )}
             </div>
+            {set.description && (
+              <p className="text-[var(--muted)] text-lg">{set.description}</p>
+            )}
           </div>
           
           <div className="flex items-center gap-2">

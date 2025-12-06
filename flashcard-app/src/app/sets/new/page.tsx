@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save, BookOpen, Sparkles, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles, AlertCircle, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { WordEntry, WordSet, createDefaultStats } from '@/lib/types';
 import { saveSet } from '@/lib/storage';
 import { validateEntries } from '@/lib/parseWords';
 import WordSetEditor from '@/components/WordSetEditor';
+import { Logo } from '@/components/Logo';
 
 export default function NewSetPage() {
   const router = useRouter();
@@ -18,6 +19,8 @@ export default function NewSetPage() {
   const [words, setWords] = useState<WordEntry[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [generatingDescription, setGeneratingDescription] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
   
   const handleSave = () => {
     const validationErrors: string[] = [];
@@ -55,6 +58,45 @@ export default function NewSetPage() {
     saveSet(newSet);
     router.push(`/sets/${newSet.id}`);
   };
+
+  const handleGenerateDescription = async () => {
+    setAiError(null);
+
+    if (words.length === 0) {
+      setAiError('Add some words first so AI has something to describe.');
+      return;
+    }
+
+    try {
+      setGeneratingDescription(true);
+      const res = await fetch('/api/generate-description', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: title || undefined,
+          words: words.map(({ term, definition }) => ({ term, definition })),
+        }),
+      });
+
+      const data = (await res.json()) as { description?: string; error?: string };
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to generate description.');
+      }
+
+      if (data.description) {
+        setDescription(data.description);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Something went wrong with AI.';
+      setAiError(message);
+    } finally {
+      setGeneratingDescription(false);
+    }
+  };
   
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
@@ -73,9 +115,7 @@ export default function NewSetPage() {
         </Link>
         
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl icon-container-primary">
-            <BookOpen className="w-7 h-7 text-white" />
-          </div>
+          <Logo size={56} asLink={false} />
           <div>
             <h1 className="text-3xl font-bold">
               Create <span className="font-serif italic">New</span> Set
@@ -114,9 +154,21 @@ export default function NewSetPage() {
             </div>
             
             <div>
-              <label className="block text-sm font-semibold mb-2">
-                Description <span className="text-[var(--muted)] font-normal">(optional)</span>
-              </label>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <label className="block text-sm font-semibold">
+                  Description{' '}
+                  <span className="text-[var(--muted)] font-normal">(optional)</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={handleGenerateDescription}
+                  disabled={generatingDescription || words.length === 0}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border border-[var(--border)] bg-[var(--background-secondary)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--primary)]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Sparkles className="w-3 h-3 text-[var(--primary)]" />
+                  {generatingDescription ? 'Generating…' : 'Generate with AI'}
+                </button>
+              </div>
               <input
                 type="text"
                 value={description}
@@ -124,6 +176,12 @@ export default function NewSetPage() {
                 className="input"
                 placeholder="Brief description of what this set covers..."
               />
+              {aiError && (
+                <p className="mt-1 text-xs text-[var(--danger)] flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  {aiError}
+                </p>
+              )}
             </div>
           </div>
         </motion.div>

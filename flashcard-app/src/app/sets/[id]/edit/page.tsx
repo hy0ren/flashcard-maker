@@ -4,7 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles, AlertCircle } from 'lucide-react';
 import { WordEntry, WordSet } from '@/lib/types';
 import { loadSet, saveSet } from '@/lib/storage';
 import { validateEntries } from '@/lib/parseWords';
@@ -24,6 +24,8 @@ export default function EditSetPage({ params }: EditSetPageProps) {
   const [errors, setErrors] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [generatingDescription, setGeneratingDescription] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
   
   useEffect(() => {
     const loadedSet = loadSet(id);
@@ -71,6 +73,45 @@ export default function EditSetPage({ params }: EditSetPageProps) {
     
     saveSet(updatedSet);
     router.push(`/sets/${id}`);
+  };
+
+  const handleGenerateDescription = async () => {
+    setAiError(null);
+
+    if (words.length === 0) {
+      setAiError('Add some words first so AI has something to describe.');
+      return;
+    }
+
+    try {
+      setGeneratingDescription(true);
+      const res = await fetch('/api/generate-description', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: title || undefined,
+          words: words.map(({ term, definition }) => ({ term, definition })),
+        }),
+      });
+
+      const data = (await res.json()) as { description?: string; error?: string };
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to generate description.');
+      }
+
+      if (data.description) {
+        setDescription(data.description);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Something went wrong with AI.';
+      setAiError(message);
+    } finally {
+      setGeneratingDescription(false);
+    }
   };
   
   if (loading) {
@@ -139,9 +180,20 @@ export default function EditSetPage({ params }: EditSetPageProps) {
           </div>
           
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Description <span className="text-[var(--muted)]">(optional)</span>
-            </label>
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <label className="block text-sm font-medium">
+                Description <span className="text-[var(--muted)]">(optional)</span>
+              </label>
+              <button
+                type="button"
+                onClick={handleGenerateDescription}
+                disabled={generatingDescription || words.length === 0}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border border-[var(--border)] bg-[var(--background-secondary)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--primary)]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <Sparkles className="w-3 h-3 text-[var(--primary)]" />
+                {generatingDescription ? 'Generating…' : 'Generate with AI'}
+              </button>
+            </div>
             <input
               type="text"
               value={description}
@@ -149,6 +201,12 @@ export default function EditSetPage({ params }: EditSetPageProps) {
               className="input"
               placeholder="Brief description of this set..."
             />
+            {aiError && (
+              <p className="mt-1 text-xs text-[var(--danger)] flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                {aiError}
+              </p>
+            )}
           </div>
         </div>
         

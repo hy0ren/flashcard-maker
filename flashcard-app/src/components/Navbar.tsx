@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Home, Plus, BarChart3, Sparkles } from 'lucide-react';
+import { Home, Plus, BarChart3 } from 'lucide-react';
+import { Logo } from './Logo';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -18,22 +19,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-18 py-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative">
-              <div className="w-11 h-11 rounded-2xl icon-container-primary group-hover:scale-105 transition-transform duration-300">
-                <BookOpen className="w-5 h-5 text-white relative z-10" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--accent)] flex items-center justify-center animate-pulse-gentle">
-                <Sparkles className="w-2.5 h-2.5 text-white" />
-              </div>
-            </div>
-            <div className="hidden sm:block">
-              <span className="font-bold text-xl tracking-tight">
-                Flash<span className="text-gradient">Cards</span>
-              </span>
-              <p className="text-[10px] text-[var(--muted)] -mt-0.5 tracking-wide">LEARN SMARTER</p>
-            </div>
-          </Link>
+          <Logo showWordmark />
           
           {/* Navigation Links */}
           <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-[var(--background-secondary)] border border-[var(--border)]">
