@@ -24,7 +24,11 @@ export default function GamesPage({ params }: GamesPageProps) {
   
   useEffect(() => {
     const loadedSet = loadSet(id);
-    setSet(loadedSet);
+    if (loadedSet) {
+      // Filter out paused words
+      const activeWords = loadedSet.words.filter(w => !w.paused);
+      setSet({ ...loadedSet, words: activeWords });
+    }
     setLoading(false);
   }, [id]);
   

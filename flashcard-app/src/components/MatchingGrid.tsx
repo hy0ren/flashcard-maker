@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import { WordEntry } from '@/lib/types';
 import { shuffleArray } from '@/lib/parseWords';
-import { Check, X, Clock } from 'lucide-react';
+import { Check, X, Clock, RotateCcw, ArrowRight } from 'lucide-react';
 
 interface MatchingGridProps {
   words: WordEntry[];
+  setId: string;
   onComplete: (score: number, totalTime: number) => void;
+  onRestart: () => void;
 }
 
 interface MatchItem {
@@ -19,7 +22,7 @@ interface MatchItem {
   matched: boolean;
 }
 
-export default function MatchingGrid({ words, onComplete }: MatchingGridProps) {
+export default function MatchingGrid({ words, setId, onComplete, onRestart }: MatchingGridProps) {
   const [terms, setTerms] = useState<MatchItem[]>([]);
   const [definitions, setDefinitions] = useState<MatchItem[]>([]);
   const [selectedTerm, setSelectedTerm] = useState<MatchItem | null>(null);
@@ -243,8 +246,25 @@ export default function MatchingGrid({ words, onComplete }: MatchingGridProps) {
               <p className="text-[var(--muted)] mb-4">
                 You completed the matching in {formatTime(elapsedTime)}
               </p>
-              <div className="text-3xl font-bold text-[var(--primary)]">
+              <div className="text-3xl font-bold text-[var(--primary)] mb-6">
                 {words.length} / {words.length}
+              </div>
+              
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={onRestart}
+                  className="btn btn-secondary"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  Try Again
+                </button>
+                <Link
+                  href={`/sets/${setId}`}
+                  className="btn btn-primary"
+                >
+                  Back to Set
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </motion.div>
           </motion.div>

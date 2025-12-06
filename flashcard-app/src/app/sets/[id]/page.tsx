@@ -4,7 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Edit2, Trash2, BookOpen, Clock, Target, Trophy, TrendingUp, Sparkles } from 'lucide-react';
+import { ArrowLeft, Edit2, Trash2, BookOpen, Clock, Target, Trophy, TrendingUp, Sparkles, Zap } from 'lucide-react';
 import { WordSet } from '@/lib/types';
 import { loadSet, deleteSet } from '@/lib/storage';
 import PracticeSelector from '@/components/PracticeSelector';
@@ -116,7 +116,7 @@ export default function SetDetailPage({ params }: SetDetailPageProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10"
+        className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10"
       >
         <div className="stat-card">
           <div className="w-12 h-12 rounded-xl bg-[var(--primary-light)] flex items-center justify-center mx-auto mb-3">
@@ -150,6 +150,16 @@ export default function SetDetailPage({ params }: SetDetailPageProps) {
             {set.stats.mcqAccuracy || 0}%
           </div>
           <div className="text-sm text-[var(--muted)]">Accuracy</div>
+        </div>
+        
+        <div className="stat-card">
+          <div className="w-12 h-12 rounded-xl bg-[var(--warning-light)] flex items-center justify-center mx-auto mb-3">
+            <Zap className="w-6 h-6 text-[var(--warning)]" />
+          </div>
+          <div className="text-3xl font-bold text-[var(--warning)]">
+            {set.stats.speedMatchHighScore || 0}
+          </div>
+          <div className="text-sm text-[var(--muted)]">Speed Match</div>
         </div>
       </motion.div>
       

@@ -2,6 +2,7 @@ export interface WordEntry {
   id: string;
   term: string;
   definition: string;
+  paused?: boolean;
 }
 
 export interface WordSet {

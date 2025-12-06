@@ -15,14 +15,14 @@ export default function Navbar() {
   ];
   
   return (
-    <nav className="sticky top-0 z-50 glass border-b border-[var(--border)]">
+    <nav className="sticky top-0 z-50 bg-[var(--background)]/70 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-18 py-3">
-          {/* Logo */}
+          {/* Logo - Left */}
           <Logo showWordmark />
           
-          {/* Navigation Links */}
-          <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-[var(--background-secondary)] border border-[var(--border)]">
+          {/* Navigation Links - Right */}
+          <div className="flex items-center gap-1">
             {links.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -34,16 +34,13 @@ export default function Navbar() {
                   className={`
                     relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300
                     ${isActive 
-                      ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' 
-                      : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                      ? 'bg-[var(--primary-light)] text-[var(--primary)]' 
+                      : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--background-secondary)]'
                     }
                   `}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-[var(--primary)]' : ''}`} />
+                  <Icon className="w-4 h-4" />
                   <span className="hidden sm:block">{link.label}</span>
-                  {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[var(--primary)]" />
-                  )}
                 </Link>
               );
             })}

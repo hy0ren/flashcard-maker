@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WordEntry } from '@/lib/types';
 import { shuffleArray } from '@/lib/parseWords';
@@ -20,6 +20,12 @@ export default function GameSpeedMatch({ words, onComplete }: GameSpeedMatchProp
   const [streak, setStreak] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [combo, setCombo] = useState(1);
+  const scoreRef = useRef(0);
+  
+  // Keep scoreRef in sync with score
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
   
   const generateQuestion = useCallback(() => {
     const shuffled = shuffleArray(words);
@@ -44,7 +50,6 @@ export default function GameSpeedMatch({ words, onComplete }: GameSpeedMatchProp
         setTimeLeft(prev => {
           if (prev <= 1) {
             setGameState('ended');
-            onComplete(score);
             return 0;
           }
           return prev - 1;
@@ -53,7 +58,14 @@ export default function GameSpeedMatch({ words, onComplete }: GameSpeedMatchProp
       
       return () => clearInterval(timer);
     }
-  }, [gameState]);
+  }, [gameState, generateQuestion]);
+  
+  // Call onComplete when game ends with the current score
+  useEffect(() => {
+    if (gameState === 'ended') {
+      onComplete(scoreRef.current);
+    }
+  }, [gameState, onComplete]);
   
   const handleAnswer = (answer: string) => {
     if (!currentWord || gameState !== 'playing') return;

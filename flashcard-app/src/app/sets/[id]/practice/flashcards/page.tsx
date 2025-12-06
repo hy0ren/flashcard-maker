@@ -31,7 +31,9 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
     const loadedSet = loadSet(id);
     if (loadedSet) {
       setSet(loadedSet);
-      setCards(loadedSet.words);
+      // Filter out paused words
+      const activeWords = loadedSet.words.filter(w => !w.paused);
+      setCards(activeWords);
     }
     setLoading(false);
   }, [id]);
@@ -99,6 +101,20 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
         <Link href="/" className="btn btn-primary">
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
+        </Link>
+      </div>
+    );
+  }
+  
+  if (cards.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">No Active Words</h1>
+        <p className="text-[var(--muted)] mb-6">
+          All words in this set are paused. Edit the set to resume some words.
+        </p>
+        <Link href={`/sets/${id}/edit`} className="btn btn-primary">
+          Edit Set
         </Link>
       </div>
     );

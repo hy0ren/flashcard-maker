@@ -22,7 +22,11 @@ export default function MatchingPage({ params }: MatchingPageProps) {
   
   useEffect(() => {
     const loadedSet = loadSet(id);
-    setSet(loadedSet);
+    if (loadedSet) {
+      // Filter out paused words
+      const activeWords = loadedSet.words.filter(w => !w.paused);
+      setSet({ ...loadedSet, words: activeWords });
+    }
     setLoading(false);
   }, [id]);
   
@@ -113,8 +117,10 @@ export default function MatchingPage({ params }: MatchingPageProps) {
         animate={{ opacity: 1, y: 0 }}
       >
         <MatchingGrid 
-          words={wordsToUse} 
+          words={wordsToUse}
+          setId={id}
           onComplete={handleComplete}
+          onRestart={handleRestart}
         />
       </motion.div>
       

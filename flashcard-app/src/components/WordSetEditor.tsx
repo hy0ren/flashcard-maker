@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { WordEntry } from '@/lib/types';
 import { parseWords, entriesToText } from '@/lib/parseWords';
-import { Trash2, GripVertical, Plus, FileText, Edit3 } from 'lucide-react';
+import { Trash2, GripVertical, Plus, FileText, Edit3, Pause, Play } from 'lucide-react';
 
 interface WordSetEditorProps {
   initialWords?: WordEntry[];
@@ -42,6 +42,13 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
   
   const handleDeleteWord = (index: number) => {
     const updated = words.filter((_, i) => i !== index);
+    setWords(updated);
+    onChange(updated);
+  };
+  
+  const handleTogglePaused = (index: number) => {
+    const updated = [...words];
+    updated[index] = { ...updated[index], paused: !updated[index].paused };
     setWords(updated);
     onChange(updated);
   };
@@ -182,10 +189,11 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
           ) : (
             <>
               {/* Header */}
-              <div className="grid grid-cols-[40px_1fr_1fr_40px] gap-3 px-2 text-sm font-medium text-[var(--muted)]">
+              <div className="grid grid-cols-[40px_1fr_1fr_40px_40px] gap-3 px-2 text-sm font-medium text-[var(--muted)]">
                 <div></div>
                 <div>Term</div>
                 <div>Definition</div>
+                <div className="text-center text-xs">Pause</div>
                 <div></div>
               </div>
               
@@ -200,7 +208,11 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
                   onDragLeave={handleDragLeave}
                   onDrop={(e) => handleDrop(e, index)}
                   onDragEnd={handleDragEnd}
-                  className={`grid grid-cols-[40px_1fr_1fr_40px] gap-3 items-center p-2 rounded-xl bg-[var(--card)] border-2 transition-all animate-fadeIn ${
+                  className={`grid grid-cols-[40px_1fr_1fr_40px_40px] gap-3 items-center p-2 rounded-xl border-2 transition-all animate-fadeIn ${
+                    word.paused 
+                      ? 'bg-[var(--muted-light)]/50 opacity-60' 
+                      : 'bg-[var(--card)]'
+                  } ${
                     draggedIndex === index 
                       ? 'opacity-50 scale-[0.98] border-[var(--border)]' 
                       : dragOverIndex === index 
@@ -217,7 +229,7 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
                     type="text"
                     value={word.term}
                     onChange={(e) => handleWordChange(index, 'term', e.target.value)}
-                    className="input py-2"
+                    className={`input py-2 ${word.paused ? 'line-through text-[var(--muted)]' : ''}`}
                     placeholder="Term"
                   />
                   
@@ -225,9 +237,21 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
                     type="text"
                     value={word.definition}
                     onChange={(e) => handleWordChange(index, 'definition', e.target.value)}
-                    className="input py-2"
+                    className={`input py-2 ${word.paused ? 'line-through text-[var(--muted)]' : ''}`}
                     placeholder="Definition"
                   />
+                  
+                  <button
+                    onClick={() => handleTogglePaused(index)}
+                    className={`p-2 rounded-lg transition-colors ${
+                      word.paused 
+                        ? 'text-[var(--warning)] bg-[var(--warning-light)] hover:bg-[var(--warning)]/20' 
+                        : 'text-[var(--muted)] hover:text-[var(--warning)] hover:bg-[var(--warning-light)]'
+                    }`}
+                    title={word.paused ? 'Resume word' : 'Pause word from practice'}
+                  >
+                    {word.paused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+                  </button>
                   
                   <button
                     onClick={() => handleDeleteWord(index)}
@@ -255,6 +279,11 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
       {words.length > 0 && (
         <div className="text-sm text-[var(--muted)] text-right">
           {words.length} word{words.length !== 1 ? 's' : ''}
+          {words.filter(w => w.paused).length > 0 && (
+            <span className="ml-2 text-[var(--warning)]">
+              ({words.filter(w => w.paused).length} paused)
+            </span>
+          )}
         </div>
       )}
     </div>
