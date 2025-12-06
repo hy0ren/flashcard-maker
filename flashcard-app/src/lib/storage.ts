@@ -97,9 +97,8 @@ export function updateSetStats(
       }
       break;
     case 'mcq':
-      // Running average for MCQ accuracy
-      const prevMcq = set.stats.mcqAccuracy || 0;
-      set.stats.mcqAccuracy = Math.round((prevMcq + accuracy) / 2);
+      // Store most recent MCQ accuracy
+      set.stats.mcqAccuracy = Math.round(accuracy);
       break;
     case 'speed-match':
       // High score for speed match

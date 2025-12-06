@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Layers } from 'lucide-react';
 import { WordSet } from '@/lib/types';
 import { loadSet, updateSetStats } from '@/lib/storage';
 import MatchingGrid from '@/components/MatchingGrid';
@@ -19,6 +19,7 @@ export default function MatchingPage({ params }: MatchingPageProps) {
   const [key, setKey] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [lastTime, setLastTime] = useState(0);
+  const [useAllWords, setUseAllWords] = useState(false);
   
   useEffect(() => {
     const loadedSet = loadSet(id);
@@ -76,8 +77,14 @@ export default function MatchingPage({ params }: MatchingPageProps) {
     );
   }
   
-  // Limit to max 8 words for matching
-  const wordsToUse = set.words.slice(0, 8);
+  // Use all words or limit to 8
+  const wordsToUse = useAllWords ? set.words : set.words.slice(0, 8);
+  
+  const handleToggleAllWords = () => {
+    setUseAllWords(!useAllWords);
+    setKey(prev => prev + 1);
+    setIsComplete(false);
+  };
   
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
@@ -108,6 +115,26 @@ export default function MatchingPage({ params }: MatchingPageProps) {
             </button>
           )}
         </div>
+        
+        {/* All Words Toggle */}
+        {set.words.length > 8 && (
+          <div className="mt-4 flex items-center gap-3">
+            <button
+              onClick={handleToggleAllWords}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all ${
+                useAllWords
+                  ? 'border-[var(--primary)] bg-[var(--primary-light)] text-[var(--primary)]'
+                  : 'border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)]'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              All Words ({set.words.length})
+            </button>
+            <span className="text-sm text-[var(--muted)]">
+              {useAllWords ? `Using all ${set.words.length} words` : `Using 8 of ${set.words.length} words`}
+            </span>
+          </div>
+        )}
       </motion.div>
       
       {/* Game */}

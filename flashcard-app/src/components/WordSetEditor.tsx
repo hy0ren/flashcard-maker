@@ -53,6 +53,12 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
     onChange(updated);
   };
   
+  const handleUnpauseAll = () => {
+    const updated = words.map(word => ({ ...word, paused: false }));
+    setWords(updated);
+    onChange(updated);
+  };
+  
   const handleBulkParse = () => {
     const parsed = parseWords(bulkText);
     setWords(parsed);
@@ -277,13 +283,26 @@ export default function WordSetEditor({ initialWords = [], onChange }: WordSetEd
       
       {/* Word Count */}
       {words.length > 0 && (
-        <div className="text-sm text-[var(--muted)] text-right">
-          {words.length} word{words.length !== 1 ? 's' : ''}
-          {words.filter(w => w.paused).length > 0 && (
-            <span className="ml-2 text-[var(--warning)]">
-              ({words.filter(w => w.paused).length} paused)
-            </span>
-          )}
+        <div className="flex items-center justify-between text-sm">
+          <div>
+            {words.filter(w => w.paused).length > 0 && (
+              <button
+                onClick={handleUnpauseAll}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[var(--warning)] bg-[var(--warning-light)] hover:bg-[var(--warning)]/20 transition-colors font-medium"
+              >
+                <Play className="w-3.5 h-3.5" />
+                Unpause All
+              </button>
+            )}
+          </div>
+          <div className="text-[var(--muted)]">
+            {words.length} word{words.length !== 1 ? 's' : ''}
+            {words.filter(w => w.paused).length > 0 && (
+              <span className="ml-2 text-[var(--warning)]">
+                ({words.filter(w => w.paused).length} paused)
+              </span>
+            )}
+          </div>
         </div>
       )}
     </div>

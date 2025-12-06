@@ -27,11 +27,18 @@ export default function GameSpeedMatch({ words, onComplete }: GameSpeedMatchProp
     scoreRef.current = score;
   }, [score]);
   
-  const generateQuestion = useCallback(() => {
-    const shuffled = shuffleArray(words);
+  const generateQuestion = useCallback((previousWordId?: string) => {
+    // Filter out the previous word to avoid repetition
+    const availableWords = previousWordId 
+      ? words.filter(w => w.id !== previousWordId)
+      : words;
+    
+    // If we only have 1 word total, we have to use it
+    const wordsToShuffle = availableWords.length > 0 ? availableWords : words;
+    const shuffled = shuffleArray(wordsToShuffle);
     const word = shuffled[0];
     
-    const wrongAnswers = shuffled
+    const wrongAnswers = shuffleArray(words)
       .filter(w => w.id !== word.id)
       .slice(0, 3)
       .map(w => w.definition);
@@ -85,7 +92,7 @@ export default function GameSpeedMatch({ words, onComplete }: GameSpeedMatchProp
     
     setTimeout(() => {
       setFeedback(null);
-      generateQuestion();
+      generateQuestion(currentWord.id);
     }, 300);
   };
   
