@@ -53,6 +53,10 @@
                    radial-gradient(at 0% 50%, rgba(125, 211, 252, 0.10) 0px, transparent 55%);
 }
 
+.font-display {
+  font-family: var(--font-display), 'Unbounded', 'Plus Jakarta Sans', sans-serif;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #020617;

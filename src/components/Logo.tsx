@@ -26,7 +26,7 @@ export function Logo({ size = 44, showWordmark = false, asLink = true }: LogoPro
       {showWordmark && (
         <div className="hidden sm:block">
           <span className="font-black text-[1.35rem] leading-none tracking-tight">
-            <span className="text-gradient drop-shadow-sm">Synapse</span>
+            <span className="text-gradient drop-shadow-sm font-display tracking-tight">Synapse</span>
           </span>
           <p className="text-[10px] text-[var(--muted)] -mt-0.5 tracking-wide">
             LEARN SMARTER

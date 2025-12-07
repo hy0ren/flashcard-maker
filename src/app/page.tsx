@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Sparkles, BookOpen, Download, Upload, ArrowRight, Layers, Zap, Target } from 'lucide-react';
 import { WordSet } from '@/lib/types';
@@ -104,7 +105,22 @@ export default function Dashboard() {
         </motion.div>
         
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
-          <span className="text-gradient block mb-2 leading-tight">Synapse</span>
+          <span className="text-gradient block mb-2 leading-tight font-display tracking-tight">
+            <span className="inline-flex items-center gap-1">
+              <span>Syn</span>
+              <span className="inline-flex items-center justify-center rounded-full bg-transparent">
+                <Image
+                  src="/9145760.png"
+                  alt="Synapse logo"
+                  width={58}
+                  height={58}
+                  className="h-12 w-12 md:h-14 md:w-14 object-contain drop-shadow-sm"
+                  priority
+                />
+              </span>
+              <span>pse</span>
+            </span>
+          </span>
           <span className="font-serif italic">Master</span> any{' '}
           <span className="text-gradient-accent">vocabulary</span>
         </h1>
