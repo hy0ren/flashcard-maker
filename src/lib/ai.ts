@@ -6,11 +6,11 @@ type DescribeSetInput = {
 export async function generateSetDescription(
   input: DescribeSetInput
 ): Promise<string> {
-  const apiKey = process.env.GOOGLE_AI_API_KEY;
+  const apiKey = process.env.MISTRAL_API_KEY;
 
   if (!apiKey) {
     throw new Error(
-      'Google AI API key is not configured. Set GOOGLE_AI_API_KEY in your environment.'
+      'Mistral API key is not configured. Set MISTRAL_API_KEY in your environment.'
     );
   }
 
@@ -25,7 +25,7 @@ export async function generateSetDescription(
     .join('\n');
 
   const systemPrompt =
-    'You help students by writing short, friendly study-set descriptions for flashcard apps.';
+    'You help students by writing short, friendly study-set descriptions for flashcard apps. Keep it under 200 words. Respond with a single plain sentence only—no quotes, no markdown, no bullets.';
 
   const userPrompt = [
     input.title
@@ -40,57 +40,48 @@ export async function generateSetDescription(
     .filter(Boolean)
     .join('\n');
 
-  const body = {
-    contents: [
-      {
-        role: 'user',
-        parts: [
-          {
-            text: `${systemPrompt}\n\n${userPrompt}`,
-          },
-        ],
-      },
-    ],
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 80,
+  const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
     },
-  };
-
-  const response = await fetch(
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' +
-      apiKey,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    }
-  );
+    body: JSON.stringify({
+      model: "mistral-large-latest",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.7,
+      max_tokens: 120,
+    }),
+  });
 
   if (!response.ok) {
-    let message = 'Failed to generate description.';
+    let message = "Failed to generate description.";
     try {
-      const errorJson = (await response.json()) as { error?: { message?: string } };
-      if (errorJson.error?.message) {
-        message = errorJson.error.message;
-      }
+      const err = (await response.json()) as { error?: { message?: string } };
+      if (err.error?.message) message = err.error.message;
     } catch {
-      // ignore JSON parse errors
+      // ignore
     }
     throw new Error(message);
   }
 
   const data = (await response.json()) as any;
-  const text =
-    data?.candidates?.[0]?.content?.parts
-      ?.map((p: any) => p.text)
-      .join(' ')
-      .trim() ?? '';
+  let text = data?.choices?.[0]?.message?.content?.trim() ?? '';
+
+  // Strip surrounding quotes/asterisks/markdown markers
+  text = text.replace(/^[\s"'*`]+/, '').replace(/[\s"'*`]+$/, '').trim();
+
+  // Enforce a 200-word cap defensively
+  const parts = text.split(/\s+/).filter(Boolean);
+  if (parts.length > 200) {
+    text = parts.slice(0, 200).join(' ');
+  }
 
   if (!text) {
-    throw new Error('Google AI returned an empty description.');
+    throw new Error('Mistral returned an empty description.');
   }
 
   return text;

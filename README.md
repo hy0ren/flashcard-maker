@@ -179,10 +179,10 @@ Synapse can use Google AI (Gemini) to automatically generate short descriptions 
 
 ### Configure your Google AI API key
 
-Create a `.env.local` file in the `flashcard-app` directory (next to `package.json`) and add:
+Create a `.env.local` file in the project root (next to `package.json`) and add:
 
 ```bash
-GOOGLE_AI_API_KEY=your_google_ai_key_here
+GOOGLE_API_KEY=your_google_ai_key_here
 ```
 
 Restart the dev server after adding or changing this file.

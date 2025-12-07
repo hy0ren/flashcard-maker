@@ -26,6 +26,20 @@ export default function EditSetPage({ params }: EditSetPageProps) {
   const [loading, setLoading] = useState(true);
   const [generatingDescription, setGeneratingDescription] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const maxDescriptionWords = 200;
+
+  const clampDescription = (value: string) => {
+    const parts = value.trim().split(/\s+/).filter(Boolean);
+    if (parts.length <= maxDescriptionWords) return value;
+    return parts.slice(0, maxDescriptionWords).join(' ');
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const next = clampDescription(e.target.value);
+    setDescription(next);
+    e.target.style.height = 'auto';
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
   
   useEffect(() => {
     const loadedSet = loadSet(id);
@@ -103,7 +117,8 @@ export default function EditSetPage({ params }: EditSetPageProps) {
       }
 
       if (data.description) {
-        setDescription(data.description);
+        const next = clampDescription(data.description);
+        setDescription(next);
       }
     } catch (error) {
       const message =
@@ -194,12 +209,13 @@ export default function EditSetPage({ params }: EditSetPageProps) {
                 {generatingDescription ? 'Generating…' : 'Generate with AI'}
               </button>
             </div>
-            <input
-              type="text"
+            <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="input"
+              onChange={handleDescriptionChange}
+              className="input min-h-[64px] resize-none leading-relaxed"
               placeholder="Brief description of this set..."
+              rows={2}
+              style={{ height: 'auto' }}
             />
             {aiError && (
               <p className="mt-1 text-xs text-[var(--danger)] flex items-center gap-1">
